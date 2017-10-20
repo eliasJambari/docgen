@@ -1,20 +1,15 @@
 import sys
 import string
-# Add tools here
+
+from openpyxl.utils import coordinate_from_string
 
 
 def check_location(cell_location):
-    if ():
-        pass
-    else:
-        sys.exit("Invalid cell location " + cell_location)
-
-
     try:
-        ws["A3"]
-        print("Valid cell location")
-    except ValueError:
-        sys.exit("Not a valid cell location")
+        coordinate_from_string(cell_location)
+        return cell_location
+    except Exception:
+       sys.exit("Not a valid cell location '" + cell_location + "'")
 
 
 def print_table(data_table):

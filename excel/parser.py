@@ -29,7 +29,7 @@ def parse_excel_file(file_name, sheet_name, columns, first_row=1, remove_empty_l
         if not(remove_empty_lines and tools.empty(row_data)):
             data.append(row_data)
 
-    return data
+    return data, ws.max_column
 
 
 if __name__ == "__main__":

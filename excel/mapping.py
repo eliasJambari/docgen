@@ -15,7 +15,7 @@ def map_col_location(data_table, max_column):
             # Check if not entry with same column/location
             if column in mapping.keys():
                 sys.exit("Cannot have multiple entries with '" + column + "'")
-            elif location not in mapping.values():
+            elif location in mapping.values():
                 sys.exit("Cannot have multiple entries with '" + location + "'")
             else:
                 mapping.update({column: location})
@@ -26,7 +26,8 @@ if __name__ == "__main__":
 
     columns = ["A", "B"]
 
-    data_table = parser.parse_excel_file(file_name, sheet_name, columns, first_row=2)
-    
+    data_table, max_column = parser.parse_excel_file(file_name, sheet_name, columns, first_row=2)
+
+    map_col_location(data_table, max_column)
 
     tools.print_table(data_table)
