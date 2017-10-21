@@ -59,7 +59,9 @@ def letter_to_index(col, max_column=None):
 def column_to_num(column):
     num = 0
 
-    if column != "":
+    if isinstance(column, int) and column > 0:
+        return column
+    elif column != "":
         for char in column:
             if char in string.ascii_letters:
                 num = num * 26 + (ord(char.upper()) - ord('A')) + 1

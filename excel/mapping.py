@@ -2,15 +2,16 @@ import sys
 
 from excel import parser
 from excel import tools
+from excel import my_constants as cst
 
 
-def map_col_location(data_table):
+def map_columns_location(data_table):
     mapping = {}
 
     for entry in data_table:
         if len(entry) == 2:
-            column = tools.letter_to_index(entry[0])
-            location = tools.check_location(entry[1])
+            column = tools.letter_to_index(entry[cst.COLUMN])
+            location = tools.check_location(entry[cst.LOCATION])
 
             # Check if not entry with same column/location
             if any(location in cells for cells in mapping.values()):
@@ -28,12 +29,12 @@ if __name__ == "__main__":
     file_name = sys.argv[1]
     sheet_name = sys.argv[2]
 
-    columns = ["A", "B"]
+    sheets_info = {}
 
-    data_table = parser.parse_excel_file(file_name, sheet_name, columns, first_row=2)
+    sheets_info.update({sheet_name: [["A", "B"], 2]})
 
-    mapping = map_col_location(data_table)
+    data_tables = parser.parse_sheets(file_name, sheets_info)
+
+    mapping = map_columns_location(data_tables[sheet_name])
 
     print(mapping)
-
-    # tools.print_table(data_table)
