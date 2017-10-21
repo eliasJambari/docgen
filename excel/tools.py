@@ -42,18 +42,30 @@ def columns_to_indexes(columns, max_column):
     return sorted(indexes)
 
 
-def letter_to_index(col, max_column):
+def letter_to_index(col, max_column=None):
+
     index = column_to_num(col)
-    if index <= max_column:
-        index = column_to_num(col)
-        return index
+
+    if max_column is not None:
+        if index <= max_column:
+            index = column_to_num(col)
+            return index
+        else:
+            sys.exit("Column '" + col + "' not present in worksheet")
     else:
-        sys.exit("Column '" + col + "' not present in worksheet")
+        return index
 
 
 def column_to_num(column):
     num = 0
-    for char in column:
-        if char in string.ascii_letters:
-            num = num * 26 + (ord(char.upper()) - ord('A')) + 1
+
+    if column != "":
+        for char in column:
+            if char in string.ascii_letters:
+                num = num * 26 + (ord(char.upper()) - ord('A')) + 1
+            else:
+                sys.exit("Column '" + column + "' is not a column")
+    else:
+        sys.exit("Empty column is not a column")
+
     return num
