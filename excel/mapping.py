@@ -1,4 +1,7 @@
 import sys
+import operator
+
+from openpyxl import load_workbook
 
 from excel import parser
 from excel import tools
@@ -24,6 +27,35 @@ def map_columns_location(data_table):
             sys.exit("No possible mapping with more than 2 columns")
 
     return mapping
+
+
+def generate_excel_files(data_table, mapping, template_file, output_directory):
+    template_file = tools.extract_one_sheet(template_file, output_directory, "template")
+
+    columns = sorted(mapping.items(), key=operator.itemgetter(0))
+    file_count = 0
+
+    for element in data_table:
+        file_count += 1
+
+        new_file_name = tools.dupplicate_file(template_file, output_directory, str(file_count).rjust(3, '0') + ".xlsx")
+
+        wb = load_workbook(filename=new_file_name)
+        ws = wb["template"]
+
+        fill_excel_file(ws, element, columns)
+
+        wb.save(new_file_name)
+
+
+def fill_excel_file(ws, content, columns):
+    for i in range(len(content)):
+        cell_content = content[i]
+        location = columns[i]
+
+        for cell in location[cst.LOCATION]:
+            ws[cell] = cell_content
+
 
 if __name__ == "__main__":
     file_name = sys.argv[1]

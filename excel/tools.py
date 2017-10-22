@@ -1,7 +1,10 @@
 import sys
+import os
 import string
+import shutil
 
 from openpyxl.utils import coordinate_from_string
+from openpyxl import load_workbook
 
 
 def check_location(cell_location):
@@ -71,3 +74,32 @@ def column_to_num(column):
         sys.exit("Empty column is not a column")
 
     return num
+
+
+def extract_one_sheet(input_file, output_directory, sheet_to_keep):
+    wb = load_workbook(filename=input_file)
+
+    to_remove = []
+
+    to_remove = wb.get_sheet_names()
+
+    to_remove.remove(sheet_to_keep)
+
+    print(to_remove)
+
+    for sheet_name in to_remove:
+        sheet_to_delete = wb.get_sheet_by_name(sheet_name)
+        wb.remove_sheet(sheet_to_delete)
+
+    output_file = os.path.join(output_directory, sheet_to_keep + ".xlsx")
+
+    wb.save(output_file)
+
+    return output_file
+
+
+def dupplicate_file(original_file, output_directory, new_file_name):
+    new_file_name = os.path.join(output_directory, new_file_name)
+    shutil.copy2(original_file, new_file_name)
+
+    return new_file_name
