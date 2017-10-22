@@ -35,6 +35,8 @@ def generate_excel_files(data_table, mapping, template_file, output_directory):
     columns = sorted(mapping.items(), key=operator.itemgetter(0))
     file_count = 0
 
+    generated_files = []
+
     for element in data_table:
         file_count += 1
 
@@ -46,6 +48,10 @@ def generate_excel_files(data_table, mapping, template_file, output_directory):
         fill_excel_file(ws, element, columns)
 
         wb.save(new_file_name)
+
+        generated_files.append(new_file_name)
+
+    return generated_files
 
 
 def fill_excel_file(ws, content, columns):

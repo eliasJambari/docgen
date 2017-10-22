@@ -2,7 +2,7 @@ import sys
 
 from excel import parser
 from excel import mapping
-from excel import tools
+from excel import to_pdf
 
 if __name__ == "__main__":
     file_name = sys.argv[1]
@@ -19,4 +19,6 @@ if __name__ == "__main__":
 
     print(data)
 
-    mapping.generate_excel_files(data, mapping_col, file_name, output_directory)
+    generated_files = mapping.generate_excel_files(data, mapping_col, file_name, output_directory)
+
+    to_pdf.convert_to_pdfs(generated_files)
