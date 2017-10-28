@@ -85,8 +85,6 @@ def extract_one_sheet(input_file, output_directory, sheet_to_keep):
 
     to_remove.remove(sheet_to_keep)
 
-    print(to_remove)
-
     for sheet_name in to_remove:
         sheet_to_delete = wb.get_sheet_by_name(sheet_name)
         wb.remove_sheet(sheet_to_delete)

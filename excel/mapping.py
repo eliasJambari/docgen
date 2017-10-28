@@ -8,7 +8,7 @@ from excel import tools
 from excel import my_constants as cst
 
 
-def map_columns_location(data_table):
+def build_mapping(data_table):
     mapping = {}
 
     for entry in data_table:
@@ -73,6 +73,6 @@ if __name__ == "__main__":
 
     data_tables = parser.parse_sheets(file_name, sheets_info)
 
-    mapping = map_columns_location(data_tables[sheet_name])
+    mapping = build_mapping(data_tables[sheet_name])
 
     print(mapping)

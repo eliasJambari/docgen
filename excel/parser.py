@@ -29,7 +29,7 @@ def parse_sheets(file_name, sheets_info, remove_empty_lines=True, plain_table=Fa
         return data_tables
 
 
-def parse_sheet(ws, columns, first_row=1, remove_empty_lines=True):
+def parse_sheet(ws, columns, first_row=2, remove_empty_lines=True):
     data = []
 
     col_indexes = tools.columns_to_indexes(columns, ws.max_column)
