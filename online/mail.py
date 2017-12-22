@@ -17,11 +17,19 @@ class MailManager():
     def extract_query(self, mail_query):
         mails = []
 
+        print(mail_query)
+
         for entry in mail_query:
             mail = Mail(self.mail_config, entry[cst.RECIPIENT], entry[cst.SUBJECT], entry[cst.MESSAGE], entry[cst.ATTACHMENTS])
             mails.append(mail)
 
         return mails
+
+    def send_emails(self):
+        for mail in self.mails:
+            mail.generate()
+            mail.send()
+            print("Email sent!")
 
 
 class MailConfig():
@@ -46,7 +54,7 @@ class Mail:
         outer = MIMEMultipart()
         outer["Subject"] = self.subject
         outer["To"] = self.recipient
-        outer["From"] = self.mail_config.getattr("sender")
+        outer["From"] = self.mail_config.__getattribute__("sender")
         # outer.preamble = "You will not see this in a MIME-aware mail reader.\n"
 
         outer.attach(MIMEText(self.message, 'plain'))
@@ -71,8 +79,8 @@ class Mail:
 
         composed_msg = self.generate()
 
-        sender = self.mail_config.getattr("sender")
-        password = self.mail_config.getattr("password")
+        sender = self.mail_config.__getattribute__("sender")
+        password = self.mail_config.__getattribute__("password")
 
         # Send the email
         try:

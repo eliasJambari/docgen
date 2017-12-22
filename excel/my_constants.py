@@ -17,3 +17,10 @@ RECIPIENT = 0
 SUBJECT = 1
 MESSAGE = 2
 ATTACHMENTS = 3
+
+# Cell type (mail sheet)
+STATIC_CONTENT = False
+DYNAMIC_CONTENT = True
+
+# Cell
+UNIQUE_CELL = 0

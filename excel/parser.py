@@ -29,24 +29,29 @@ def parse_sheets(file_name, sheets_info, remove_empty_lines=True, plain_table=Fa
         return data_tables
 
 
+# Parse single sheet
 def parse_sheet(ws, columns, first_row=2, remove_empty_lines=True):
     data = []
 
     col_indexes = tools.columns_to_indexes(columns, ws.max_column)
 
+    # Iterate over each row of the sheet
     for row in ws.iter_rows(row_offset=first_row-1):
         row_data = []
 
-        current_col = 1
-        next = 0
+        current_cell = 1
+        next_cell = 0
 
+        # Iterate over each cell of the current row
         for cell in row:
-            if current_col == col_indexes[next]:
+            if next_cell >= len(col_indexes):
+                break
+            if current_cell == col_indexes[next_cell]:
                 row_data.append(tools.to_str(cell.value))
-                next += 1
-            current_col += 1
+                next_cell += 1
+            current_cell += 1
 
-        # Add line if not empty and option selected
+        # Add line if applicable
         if not(remove_empty_lines and tools.empty(row_data)):
             data.append(row_data)
 

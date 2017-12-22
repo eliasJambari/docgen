@@ -101,3 +101,14 @@ def dupplicate_file(original_file, output_directory, new_file_name):
     shutil.copy2(original_file, new_file_name)
 
     return new_file_name
+
+
+def is_valid(value, max):
+    if not isinstance(value, int):
+        sys.exit("Value '" + str(value) + "' is not a numeric value")
+
+    if 0 <= value < max:
+        return
+    else:
+        sys.exit("Value '" + str(value) + "' is out of range (max : " + str(max) + " excluded)")
+
