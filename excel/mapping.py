@@ -1,7 +1,7 @@
 import sys
+import os
 import operator
-
-from openpyxl import load_workbook
+import win32com.client
 
 from excel import parser
 from excel import tools
@@ -37,30 +37,34 @@ def generate_excel_files(data_table, mapping, template_file, output_directory):
 
     generated_files = []
 
+    o = win32com.client.Dispatch("Excel.Application") # Open excel
+    o.Visible = False # Visibility to the user
+
+    wb = o.Workbooks.Open(template_file) # Open Workbook
+    wb.WorkSheets("template").Select()  # Sheets to select
+
     for element in data_table:
         file_count += 1
 
-        new_file_name = tools.dupplicate_file(template_file, output_directory, str(file_count).rjust(3, '0') + ".xlsx")
+        pdf_file = os.path.join(output_directory, str(file_count).rjust(3, '0') + ".pdf") # Create file name
 
-        wb = load_workbook(filename=new_file_name)
-        ws = wb["template"]
+        fill_excel_file(wb.ActiveSheet, element, columns) # Fill each file individually
 
-        fill_excel_file(ws, element, columns)
+        wb.ActiveSheet.ExportAsFixedFormat(0, pdf_file) # Export as pdf
+        generated_files.append(pdf_file)
 
-        wb.save(new_file_name)
-
-        generated_files.append(new_file_name)
-
+    wb.Close(True)  # Close program to prevent file from being left opened
     return generated_files
 
 
+# Fill file individually
 def fill_excel_file(ws, content, columns):
     for i in range(len(content)):
         cell_content = content[i]
         location = columns[i]
 
         for cell in location[cst.LOCATION]:
-            ws[cell] = cell_content
+            ws.Range(cell).Value = cell_content
 
 
 if __name__ == "__main__":

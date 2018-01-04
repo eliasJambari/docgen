@@ -13,7 +13,7 @@ def convert(file_name):
 
     wb.WorkSheets([1]).Select() # Sheets to select
     wb.ActiveSheet.ExportAsFixedFormat(0, path_to_pdf) # Export as pdf
-    wb.Close(True) # Close program to prevent from file from being left opened
+    wb.Close(True) # Close program to prevent file from being left opened
 
     print("Generated pdf : " + file_name + ".pdf")
 

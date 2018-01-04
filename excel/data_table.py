@@ -1,9 +1,10 @@
 import sys
 import os
+import logging
+logger = logging.getLogger()
 
 from excel import parser
 from excel import mapping
-from excel import pdf
 from excel import tools
 from excel import my_constants as cst
 
@@ -17,6 +18,8 @@ class DataTable():
         self.data_mapping = self.build_map(["A", "B"])
         self.data = self.parse_data(2)
 
+        logger.debug("DataTable created")
+
     def build_map(self, columns):
         raw_data = parser.parse_sheets(self.excel_file, {"mapping": [columns, 2]}, plain_table=True)
         data_mapping = mapping.build_mapping(raw_data)
@@ -28,7 +31,7 @@ class DataTable():
 
     def generate_pdfs(self):
         self.generated_files = mapping.generate_excel_files(self.data, self.data_mapping, self.excel_file, self.output_dir)
-        pdf.convert_to(self.generated_files)
+        # pdf.convert_to(self.generated_files)
 
     def build_mail_query(self):
         mapping = self.build_mail_info()

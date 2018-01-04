@@ -1,6 +1,9 @@
 import os
 import sys
 import smtplib
+import logging
+logger = logging.getLogger()
+
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
@@ -14,10 +17,11 @@ class MailManager():
         self.mail_config = MailConfig("test.auto.1990@gmail.com", "galaxys4")
         self.mails = self.extract_query(mail_query)
 
+    # Extracts mails from query (2D table) and creates mail objects
     def extract_query(self, mail_query):
         mails = []
 
-        print(mail_query)
+        logger.debug("Mail query : " + str(mail_query))
 
         for entry in mail_query:
             mail = Mail(self.mail_config, entry[cst.RECIPIENT], entry[cst.SUBJECT], entry[cst.MESSAGE], entry[cst.ATTACHMENTS])
@@ -29,7 +33,6 @@ class MailManager():
         for mail in self.mails:
             mail.generate()
             mail.send()
-            print("Email sent!")
 
 
 class MailConfig():
@@ -91,7 +94,7 @@ class Mail:
                 s.login(sender, password)
                 s.sendmail(sender, self.recipient, composed_msg)
                 s.close()
-            print("Email sent to '" + self.recipient + "' with '" + str(self.attachments) + "'")
+            logger.info("Email sent to '" + str(self.recipient) + "' with '" + str(self.attachments) + "'")
             self.status = cst.SENT
             return self.status
         except:
@@ -100,9 +103,26 @@ class Mail:
             return self.status
 
 
-if __name__ == "__main__":
-    file_to_send = sys.argv[1]
+def check_auth(user, password):
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.starttls()
 
-    mail_config = MailConfig("", "")
+    try:
+        server.login(user, password)
+        result = True
+    except:
+        result = False
+
+    server.quit()
+
+    return result
+
+if __name__ == "__main__":
+    user = "test.auto.1990@gmail.com"
+    password = "galaxys4"
+
+    result = check_auth(user, password)
+
+    print(result)
 
 
