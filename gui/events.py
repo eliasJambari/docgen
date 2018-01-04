@@ -1,22 +1,24 @@
-import sys
 import logging
+import sys
+
 logger = logging.getLogger()
 
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QDialog
-from gui.ui_preferences import Ui_preferences
+from PyQt5.QtWidgets import QFileDialog, QDialog, QApplication
+from PyQt5.QtCore import Qt
+from gui.preferences.ui_preferences import Ui_preferences
 
 from online import mail
-from gui import events_fcts as fcts
+from gui.preferences import functions as fcts
 from gui import my_constants as cst
 
-class Events():
+
+class Main():
     def __init__(self, app, ui):
         self.app = app
         self.ui = ui
+        self.preferences = None
         self.ui_preferences = None
-        self.ui.window = None
-        # self.ui.central_widget.se
+        self.ui.w_preferences = None
 
     def add_events(self):
         self.add_menu_events()
@@ -47,19 +49,23 @@ class Events():
 
     def open_preferences(self):
         logger.info("Opened Dialog Preferences")
-        self.ui.window = QDialog()
+        self.ui.w_preferences = QDialog()
         self.ui_preferences = Ui_preferences()
-        self.ui_preferences.setupUi(self.ui.window)
+        self.ui_preferences.setupUi(self.ui.w_preferences)
 
         # Add events to QDialog preferences
         self.ui_preferences.validate_btn.clicked.connect(self.check_auth)
         self.ui_preferences.clear_btn.clicked.connect(self.clear_auth)
+        self.ui_preferences.cancel_btn.clicked.connect(self.ui.w_preferences.close)
+
         fcts.set_validation_state(self.ui_preferences, cst.NOT_VALIDATED)
 
-        self.ui.window.show()
+        self.ui.w_preferences.show()
 
     def check_auth(self):
         fcts.set_validation_state(self.ui_preferences, cst.VALIDATING)
+
+        QApplication.setOverrideCursor(Qt.WaitCursor)
 
         user = self.ui_preferences.add_txt.text() + "@gmail.com"
         password = self.ui_preferences.pass_txt.text()
@@ -73,6 +79,8 @@ class Events():
             fcts.set_validation_state(self.ui_preferences, cst.VALIDATED)
         else:
             fcts.set_validation_state(self.ui_preferences, cst.INCORRECT_LOGIN)
+
+        QApplication.restoreOverrideCursor()
 
     def clear_auth(self):
         # Clear input fields

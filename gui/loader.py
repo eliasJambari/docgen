@@ -1,8 +1,9 @@
 import sys
 
-from gui.ui import Ui_main_window
-from gui.events import Events
 from PyQt5.QtWidgets import QApplication, QMainWindow
+
+from gui.events import Main
+from gui.ui_main import Ui_main_window
 
 
 def load_gui():
@@ -11,7 +12,7 @@ def load_gui():
     ui = Ui_main_window()
     ui.setupUi(window)
 
-    events = Events(app, ui)
+    events = Main(app, ui)
     events.add_events()
 
     window.show()
