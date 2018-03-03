@@ -109,8 +109,10 @@ def extract_one_sheet(input_file, output_directory, sheet_to_keep):
     output_file = os.path.join(output_directory, sheet_to_keep + ".xlsx")
 
     # wb.save(output_file)
-
-    return dupplicate_file(input_file, output_directory, sheet_to_keep + ".xlsx")
+    print("input_file : " + input_file)
+    print("output_directory : " + output_directory)
+    print("output_file : " + output_file)
+    return dupplicate_file(input_file, output_directory, output_file)
 
 
 # Copies a file to an output directory with new file name

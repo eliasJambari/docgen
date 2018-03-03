@@ -3,36 +3,67 @@ import sys
 
 logger = logging.getLogger()
 
-from PyQt5.QtWidgets import QFileDialog, QDialog, QApplication
-from PyQt5.QtCore import Qt
-from gui.preferences.ui_preferences import Ui_preferences
-
-from online import mail
-from gui.preferences import functions as fcts
-from gui import my_constants as cst
-
+from PyQt5.QtWidgets import QFileDialog
+from gui.preferences.events import Preferences
+from gui.generation import DocumentGeneration, Parameters
+from gui import progress
 
 class Main():
     def __init__(self, app, ui):
         self.app = app
         self.ui = ui
         self.preferences = None
-        self.ui_preferences = None
-        self.ui.w_preferences = None
+        self.doc_gen = None
 
     def add_events(self):
         self.add_menu_events()
 
-        self.ui.generate_btn.clicked.connect(self.test)
+        self.ui.generate_btn.clicked.connect(self.generate)
         self.ui.input_file_btn.clicked.connect(self.choose_file)
         self.ui.output_dir_btn.clicked.connect(self.choose_dir)
 
+    # Menu bar
     def add_menu_events(self):
         self.ui.quit_act.triggered.connect(self.quit_app)
         self.ui.preferences_act.triggered.connect(self.open_preferences)
 
-    def test(self):
-        print("Test")
+    def generate(self):
+
+        parameters = Parameters(self.ui.input_file_txt.text(), self.ui.output_dir_txt.text())
+
+        self.doc_gen = DocumentGeneration(parameters)
+
+        # print(self.doc_gen.parameters.input_file)
+        # print(self.doc_gen.parameters.output_dir)
+
+        n_elements = 2
+        self.ui.generation_pbr.setMaximum(2+3*n_elements)
+        self.ui.generation_pbr.setValue(0)
+
+        progress.n_tasks = 2+3*n_elements
+        print(str(progress.n_tasks) + " tasks")
+
+        # Link functions for progress and termination
+        self.doc_gen.step_completed.connect(self.update_progress)
+        self.doc_gen.finished.connect(self.completed)
+
+        self.doc_gen.start()
+
+        # Activate buttons for stopping the generation
+        self.ui.cancel_btn.setEnabled(True)
+        self.ui.cancel_btn.clicked.connect(self.doc_gen.terminate)
+
+        self.ui.generate_btn.setEnabled(False)
+
+    def update_progress(self, weight, step, debug = None):
+        self.ui.generation_pbr.setValue(self.ui.generation_pbr.value() + weight)
+        self.ui.status_bar.showMessage(str(step))
+
+        if debug is not None:
+            logger.debug(debug)
+
+    def completed(self):
+        pass
 
     def choose_file(self):
         file_name, extension = QFileDialog.getOpenFileName(self.ui.central_widget, "Choose excel file",
@@ -49,46 +80,10 @@ class Main():
 
     def open_preferences(self):
         logger.info("Opened Dialog Preferences")
-        self.ui.w_preferences = QDialog()
-        self.ui_preferences = Ui_preferences()
-        self.ui_preferences.setupUi(self.ui.w_preferences)
 
-        # Add events to QDialog preferences
-        self.ui_preferences.validate_btn.clicked.connect(self.check_auth)
-        self.ui_preferences.clear_btn.clicked.connect(self.clear_auth)
-        self.ui_preferences.cancel_btn.clicked.connect(self.ui.w_preferences.close)
+        self.preferences = Preferences()
 
-        fcts.set_validation_state(self.ui_preferences, cst.NOT_VALIDATED)
-
-        self.ui.w_preferences.show()
-
-    def check_auth(self):
-        fcts.set_validation_state(self.ui_preferences, cst.VALIDATING)
-
-        QApplication.setOverrideCursor(Qt.WaitCursor)
-
-        user = self.ui_preferences.add_txt.text() + "@gmail.com"
-        password = self.ui_preferences.pass_txt.text()
-
-        print("User : " + str(user))
-        print("Password : " + str(password))
-        result = mail.check_auth(user, password)
-        print(result)
-
-        if result:
-            fcts.set_validation_state(self.ui_preferences, cst.VALIDATED)
-        else:
-            fcts.set_validation_state(self.ui_preferences, cst.INCORRECT_LOGIN)
-
-        QApplication.restoreOverrideCursor()
-
-    def clear_auth(self):
-        # Clear input fields
-        self.ui_preferences.add_txt.setText("")
-        self.ui_preferences.pass_txt.setText("")
-
-        # Disable options (mode : need validation)
-        fcts.set_validation_state(self.ui_preferences, cst.NOT_VALIDATED)
+        # self.ui.w_preferences = self.preferences.window
 
     def quit_app(self):
         # Add app exit when X button is pressed

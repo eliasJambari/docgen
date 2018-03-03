@@ -10,7 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from excel import my_constants as cst
-
+from gui import progress
 
 class MailManager():
     def __init__(self, mail_query):
@@ -53,6 +53,8 @@ class Mail:
         self.status = cst.PENDING
 
     def generate(self):
+        progress.tmp_solution(1, "Sending mails", debug=("Generating mail"))
+
         # Create the enclosing (outer) message
         outer = MIMEMultipart()
         outer["Subject"] = self.subject
@@ -82,6 +84,7 @@ class Mail:
 
         composed_msg = self.generate()
 
+        progress.tmp_solution(1, "Sending mails", debug=("Sending mail"))
         sender = self.mail_config.__getattribute__("sender")
         password = self.mail_config.__getattribute__("password")
 

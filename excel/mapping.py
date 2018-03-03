@@ -6,6 +6,7 @@ import win32com.client
 from excel import parser
 from excel import tools
 from excel import my_constants as cst
+from gui import progress
 
 
 def build_mapping(data_table):
@@ -30,6 +31,7 @@ def build_mapping(data_table):
 
 
 def generate_excel_files(data_table, mapping, template_file, output_directory):
+    progress.tmp_solution(1, "Generating PDF files", debug="Started PDF files processing")
     template_file = tools.extract_one_sheet(template_file, output_directory, "template")
 
     columns = sorted(mapping.items(), key=operator.itemgetter(0))
@@ -52,6 +54,7 @@ def generate_excel_files(data_table, mapping, template_file, output_directory):
 
         wb.ActiveSheet.ExportAsFixedFormat(0, pdf_file) # Export as pdf
         generated_files.append(pdf_file)
+        progress.tmp_solution(1, "Generating PDF files", debug=("Filling and generating PDF file" + pdf_file))
 
     wb.Close(True)  # Close program to prevent file from being left opened
     return generated_files

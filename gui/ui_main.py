@@ -63,7 +63,7 @@ class Ui_main_window(object):
         self.verticalLayout_3.addWidget(self.print_docs_cbx)
         self.vertical_layout.addWidget(self.options_sct)
         self.generation_pbr = QtWidgets.QProgressBar(self.central_widget)
-        self.generation_pbr.setProperty("value", 24)
+        self.generation_pbr.setProperty("value", 0)
         self.generation_pbr.setObjectName("generation_pbr")
         self.vertical_layout.addWidget(self.generation_pbr)
         self.generate_sct = QtWidgets.QHBoxLayout()
